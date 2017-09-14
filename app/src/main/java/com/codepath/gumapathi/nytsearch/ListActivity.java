@@ -11,8 +11,6 @@ import com.codepath.gumapathi.nytsearch.Adapter.ArticlesAdapter;
 import com.codepath.gumapathi.nytsearch.Model.ArticleResponse;
 import com.google.gson.Gson;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -23,7 +21,7 @@ import okhttp3.Response;
 
 
 public class ListActivity extends AppCompatActivity {
-    final Gson gson = new Gson();
+    Gson gson;
     ArticlesAdapter articlesAdapter;
 
 
@@ -36,7 +34,7 @@ public class ListActivity extends AppCompatActivity {
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 // Attach the layout manager to the recycler view
         rvArticles.setLayoutManager(gridLayoutManager);
-
+        gson = new Gson();
     }
 
     public void onClickSearch(View view) {
@@ -66,26 +64,29 @@ public class ListActivity extends AppCompatActivity {
                     throw new IOException("Unexpected code " + response);
                 } else {
                     Log.i("SAMY", "successful");
-                    //runOnUiThread(new Runnable() {
-                        //@Override
-                        //public void run() {
+                    Log.i("SAMY", "running on UI Thread");
+                    //String responseData = response.body().string();
+                    //Log.i("SAMY-response", responseData);
+                    //JSONObject json = new JSONObject(responseData);
+                    final ArticleResponse artResponse = gson.fromJson(response.body().charStream(), ArticleResponse.class);
+                    Log.i("SAMY-response", artResponse.getCopyright());
+                    //JSONArray movieResults = json.getJSONArray("results");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
                             try {
-                                Log.i("SAMY", "running on UI Thread");
-                                //String responseData = response.body().string();
-                                //Log.i("SAMY-response", responseData);
-                                //JSONObject json = new JSONObject(responseData);
-                                ArticleResponse artResponse = gson.fromJson(response.body().charStream(), ArticleResponse.class);
-                                //JSONArray movieResults = json.getJSONArray("results");
+
                                 articlesAdapter = new ArticlesAdapter(artResponse.getResponse().getDocs());
                                 RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
                                 rvArticles.setAdapter(articlesAdapter);
                                 articlesAdapter.notifyDataSetChanged();
                             } catch (Exception e) {
                                 Log.i("SAMY-error", e.toString());
+                                e.printStackTrace();
                                 //e.printStackTrace();
                             }
-                        //}//end run()
-                    //});//end runOnUiThread
+                        }//end run()
+                    });//end runOnUiThread
                 }
             }
         });
