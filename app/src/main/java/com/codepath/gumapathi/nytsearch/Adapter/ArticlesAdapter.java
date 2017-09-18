@@ -14,11 +14,14 @@ import com.codepath.gumapathi.nytsearch.Model.Doc;
 import com.codepath.gumapathi.nytsearch.Model.Multimedium;
 import com.codepath.gumapathi.nytsearch.R;
 import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.List;
 
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
+
+import static java.security.AccessController.getContext;
 
 /**
  * Created by gumapathi on 9/13/2017.
@@ -45,12 +48,15 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
                     Log.i("SAMY-adp-else", imageUri);
                 }
             }
+
             ImageView ivArticleImage = articleViewHolder.ivArticleImage;
-            Picasso.with(articleViewHolder.ivArticleImage.getContext())
+            Glide.with(articleViewHolder.ivArticleImage.getContext()).load(imageUri).into(ivArticleImage);
+            /*Picasso.with(articleViewHolder.ivArticleImage.getContext())
                 .load(imageUri)
                 //.placeholder(R.drawable.placeholder)
                 //.transform(new RoundedCornersTransformation(15, 15, RoundedCornersTransformation.CornerType.ALL))
                 .into(ivArticleImage);
+                */
         }
         else {
         }

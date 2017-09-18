@@ -1,6 +1,7 @@
 package com.codepath.gumapathi.nytsearch;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -13,10 +14,12 @@ import com.codepath.gumapathi.nytsearch.Model.ArticleResponse;
 import com.codepath.gumapathi.nytsearch.Model.Doc;
 import com.google.gson.Gson;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -29,6 +32,7 @@ public class ListActivity extends AppCompatActivity {
     final Gson gson = new Gson();
     ArticlesAdapter articlesAdapter;
     private EndlessRecyclerViewScrollListener scrollListener;
+    ArrayList<Doc> allArticles;
 
 
     @Override
@@ -36,12 +40,17 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
-        StaggeredGridLayoutManager gridLayoutManager =
+        allArticles = new ArrayList<>();
+        StaggeredGridLayoutManager staggeredGridLayoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        // Attach the layout manager to the recycler view
-        rvArticles.setLayoutManager(gridLayoutManager);
+        staggeredGridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
 
-        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+        // Attach the layout manager to the recycler view
+        rvArticles.setLayoutManager(staggeredGridLayoutManager);
+        articlesAdapter = new ArticlesAdapter(allArticles);
+        rvArticles.setAdapter(articlesAdapter);
+
+        scrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
@@ -86,10 +95,7 @@ public class ListActivity extends AppCompatActivity {
                             try {
 
                                 //JSONArray movieResults = json.getJSONArray("results");
-                                List<Doc> newArticles = artResponse.getResponse().getDocs();
-                                articlesAdapter = new ArticlesAdapter(artResponse.getResponse().getDocs());
-                                RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
-                                rvArticles.setAdapter(articlesAdapter);
+                                allArticles.addAll(artResponse.getResponse().getDocs());
                                 articlesAdapter.notifyDataSetChanged();
                             } catch (Exception e) {
                                 Log.i("SAMY-error", e.toString());
@@ -130,22 +136,19 @@ public class ListActivity extends AppCompatActivity {
                 } else {
                     Log.i("SAMY", "successful");
                     Log.i("SAMY", "running on UI Thread");
-                    //String responseData = response.body().string();
-                    //Log.i("SAMY-response", responseData);
+                    String responseData = response.body().string();
+                    Log.i("SAMY-response", responseData);
                     //JSONObject json = new JSONObject(responseData);
-                    final ArticleResponse artResponse = gson.fromJson(response.body().charStream(), ArticleResponse.class);
+                    final ArticleResponse artResponse = gson.fromJson(responseData, ArticleResponse.class);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
-
-                                //JSONArray movieResults = json.getJSONArray("results");
-                                articlesAdapter = new ArticlesAdapter(artResponse.getResponse().getDocs());
-                                RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
-                                rvArticles.setAdapter(articlesAdapter);
+                                allArticles.addAll(artResponse.getResponse().getDocs());
                                 articlesAdapter.notifyDataSetChanged();
                             } catch (Exception e) {
                                 Log.i("SAMY-error", e.toString());
+                                e.printStackTrace();
                                 //e.printStackTrace();
                             }
                         }//end run()
