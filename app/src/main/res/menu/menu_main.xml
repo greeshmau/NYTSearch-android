@@ -9,4 +9,10 @@
         android:icon="@drawable/ic_search_white_36px"
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView" />
+    <item android:id="@+id/action_filter"
+        android:orderInCategory="5"
+        android:title="Filter"
+        android:icon="@drawable/ic_filter_list_black_24dp"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="andriod.support.v7.widget.FilterView" />
 </menu>
