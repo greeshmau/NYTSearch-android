@@ -1,11 +1,12 @@
 package com.codepath.gumapathi.nytsearch;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 
 import com.codepath.gumapathi.nytsearch.Adapter.ArticlesAdapter;
@@ -16,10 +17,6 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -39,6 +36,12 @@ public class ListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        // Find the toolbar view inside the activity layout
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // Sets the Toolbar to act as the ActionBar for this Activity window.
+        // Make sure the toolbar exists in the activity and is not null
+        setSupportActionBar(toolbar);
+
         RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
         allArticles = new ArrayList<>();
         StaggeredGridLayoutManager staggeredGridLayoutManager =
@@ -64,11 +67,20 @@ public class ListActivity extends AppCompatActivity {
 
     }
 
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
     public void loadNextSetOfArticles(int pageNum) {
         OkHttpClient client = new OkHttpClient();
-
+        String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=054c6d1972c142b4a8c84bbb300c4d87" + "&page=" + pageNum;
+        Log.i("SAMY-againsearch", url);
         Request request = new Request.Builder()
-                .url("https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=054c6d1972c142b4a8c84bbb300c4d87" + "&page=" + pageNum)
+                .url(url)
                 .build();
         Log.i("SAMY", "Searching articles");
         client.newCall(request).enqueue(new Callback() {
@@ -83,7 +95,7 @@ public class ListActivity extends AppCompatActivity {
             public void onResponse(Call call, final Response response) throws IOException {
                 Log.i("SAMY", "response");
                 if (!response.isSuccessful()) {
-                    Log.i("SAMY", "unsuccessful");
+                    Log.i("SAMY", "unsuccessful"+response.toString());
                     throw new IOException("Unexpected code " + response);
                 } else {
                     Log.i("SAMY", "successful");
