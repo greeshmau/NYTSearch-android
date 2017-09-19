@@ -4,24 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar"
     android:minHeight="?attr/actionBarSize"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:titleTextColor="@android:color/white"
     android:fitsSystemWindows="true"
     android:background="?attr/colorPrimary">
-    <EditText
-        android:id="@+id/etSearchTerm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:ems="10"
-        android:inputType="textAutoComplete"
-        tools:text="Search Term"
-        android:textColor="@android:color/white"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/btnSearch"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        android:layout_below="@+id/toolbar"
-        android:layout_alignParentStart="true" />
 </android.support.v7.widget.Toolbar>
