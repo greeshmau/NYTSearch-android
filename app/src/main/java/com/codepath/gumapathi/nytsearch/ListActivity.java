@@ -2,12 +2,15 @@ package com.codepath.gumapathi.nytsearch;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.codepath.gumapathi.nytsearch.Adapter.ArticlesAdapter;
 import com.codepath.gumapathi.nytsearch.Helpers.EndlessRecyclerViewScrollListener;
@@ -31,40 +34,56 @@ public class ListActivity extends AppCompatActivity {
     private EndlessRecyclerViewScrollListener scrollListener;
     ArrayList<Doc> allArticles;
 
+    // Tracks current contextual action mode
+    private ActionMode currentActionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-        // Find the toolbar view inside the activity layout
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        // Sets the Toolbar to act as the ActionBar for this Activity window.
-        // Make sure the toolbar exists in the activity and is not null
-        setSupportActionBar(toolbar);
+        /*
+         * Menu/Action Item related stuff
+         */
 
-        RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
-        allArticles = new ArrayList<>();
-        StaggeredGridLayoutManager staggeredGridLayoutManager =
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        staggeredGridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
 
-        // Attach the layout manager to the recycler view
-        rvArticles.setLayoutManager(staggeredGridLayoutManager);
-        articlesAdapter = new ArticlesAdapter(allArticles);
-        rvArticles.setAdapter(articlesAdapter);
+        /*
+         * Toolbar related stuff
+         */
+        {
+            // Find the toolbar view inside the activity layout
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            // Sets the Toolbar to act as the ActionBar for this Activity window.
+            // Make sure the toolbar exists in the activity and is not null
+            setSupportActionBar(toolbar);
+        }
 
-        scrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                loadNextSetOfArticles(page);
-                searchArticles();
-            }
-        };
-        // Adds the scroll listener to RecyclerView
-        rvArticles.addOnScrollListener(scrollListener);
+        /*
+         * Recycleview related stuff
+         */
+        {
+            RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
+            allArticles = new ArrayList<>();
+            StaggeredGridLayoutManager staggeredGridLayoutManager =
+                    new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+            staggeredGridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
 
+            // Attach the layout manager to the recycler view
+            rvArticles.setLayoutManager(staggeredGridLayoutManager);
+            articlesAdapter = new ArticlesAdapter(allArticles);
+            rvArticles.setAdapter(articlesAdapter);
+
+            scrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
+                @Override
+                public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                    // Triggered only when new data needs to be appended to the list
+                    // Add whatever code is needed to append new items to the bottom of the list
+                    loadNextSetOfArticles(page);
+                    searchArticles();
+                }
+            };
+            // Adds the scroll listener to RecyclerView
+            rvArticles.addOnScrollListener(scrollListener);
+        }
     }
 
     // Menu icons are inflated just as they were with actionbar
@@ -74,6 +93,42 @@ public class ListActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
+    // Define the callback when ActionMode is activated
+    private ActionMode.Callback modeCallBack = new ActionMode.Callback() {
+        // Called when the action mode is created; startActionMode() was called
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.setTitle("Actions");
+            mode.getMenuInflater().inflate(R.menu.menu_main, menu);
+            return true;
+        }
+
+        // Called each time the action mode is shown.
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false; // Return false if nothing is done
+        }
+
+        // Called when the user selects a contextual menu item
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_search:
+                    Toast.makeText(ListActivity.this, "Searching!", Toast.LENGTH_SHORT).show();
+                    mode.finish(); // Action picked, so close the contextual menu
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // Called when the user exits the action mode
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            currentActionMode = null; // Clear current action mode
+        }
+    };
 
     public void loadNextSetOfArticles(int pageNum) {
         OkHttpClient client = new OkHttpClient();
