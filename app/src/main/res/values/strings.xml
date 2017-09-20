@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">NYTSearch</string>
     <string name="hello_world">Hello World</string>
+    <string name="begin_date">Begin Date</string>
+    <string name="end_date">End Date</string>
+    <string name="oldest_first">Oldest First</string>
+    <string name="newest_first">Newest First</string>
+    <string name="news_desk">News Desk</string>
+    <string name="label_art">Arts</string>
+    <string name="label_sport">Sports</string>
+    <string name="fashion"><![CDATA[Fashion & Style]]></string>
 </resources>

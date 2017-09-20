@@ -37,11 +37,21 @@ public class ListActivity extends AppCompatActivity {
     ArticlesAdapter articlesAdapter;
     ArrayList<Doc> allArticles;
     private EndlessRecyclerViewScrollListener scrollListener;
+    ProgressDialog pd = new ProgressDialog(this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+
+
+        pd.setTitle("Loading...");
+
+        pd.setMessage("Querying NYT API.");
+
+        pd.setCancelable(false);
         /*
          * Toolbar related stuff
          */
@@ -98,6 +108,7 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // perform query here
+                pd.show();
                 searchArticles(query);
                 Toast.makeText(ListActivity.this, "Searching! " + query, Toast.LENGTH_SHORT).show();
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
@@ -219,6 +230,7 @@ public class ListActivity extends AppCompatActivity {
                     });//end runOnUiThread
                 }
             }
+            pd.dismiss();
         });
     }
 }
