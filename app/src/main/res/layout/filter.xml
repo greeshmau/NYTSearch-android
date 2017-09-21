@@ -16,6 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:onClick="onSwitchClicked"
             android:text="@string/oldest_first" />
 
         <TextView
@@ -33,7 +34,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,9 +54,9 @@
                 android:id="@+id/ibBeginDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@id/tvBeginDate"
                 android:contentDescription="@string/begin_date"
                 android:background="@android:color/transparent"
+                android:onClick="onBeginDateClicked"
                 android:src="@drawable/ic_today_black_24dp" />
 
             <TextView
@@ -78,12 +80,12 @@
                 android:text="@string/end_date" />
 
             <ImageButton
-                android:id="@+id/ibEndDate"
+                android:id="@+id/ivEndDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@id/tvEndDateText"
                 android:contentDescription="@string/end_date"
                 android:background="@android:color/transparent"
+                android:onClick="onEndDateClicked"
                 android:src="@drawable/ic_today_black_24dp"
                  />
 
@@ -133,4 +135,9 @@
         </LinearLayout>
     </LinearLayout>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/apply_filter"
+        android:onClick="onApplyFilterClicked"/>
 </LinearLayout>

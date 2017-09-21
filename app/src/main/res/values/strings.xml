@@ -9,4 +9,5 @@
     <string name="label_art">Arts</string>
     <string name="label_sport">Sports</string>
     <string name="fashion"><![CDATA[Fashion & Style]]></string>
+    <string name="apply_filter">Apply Filter</string>
 </resources>
