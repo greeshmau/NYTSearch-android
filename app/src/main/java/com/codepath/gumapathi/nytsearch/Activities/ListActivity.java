@@ -5,8 +5,12 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -63,6 +67,9 @@ public class ListActivity extends AppCompatActivity {
     private CheckBox cbSports;
     private CheckBox cbFashion;
     private Switch swOldNew;
+    private DrawerLayout mDrawer;
+    private NavigationView nvDrawer;
+
 
     private APIQueryStringBuilder apiStringQuery;
 
@@ -88,8 +95,14 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(0);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //setupDrawerContent(nvDrawer);
+
 
         RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
         allArticles = new ArrayList<>();
@@ -112,6 +125,54 @@ public class ListActivity extends AppCompatActivity {
         }
 
     }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+//        // Create a new fragment and specify the fragment to show based on nav item clicked
+//        Fragment fragment = null;
+//        Class fragmentClass;
+//        switch(menuItem.getItemId()) {
+//            case R.id.nav_first_fragment:
+//                Toast.makeText(ListActivity.this, "First", Toast.LENGTH_SHORT).show();
+//                break;
+//            case R.id.nav_second_fragment:
+//                Toast.makeText(ListActivity.this, "2", Toast.LENGTH_SHORT).show();
+//                break;
+//            case R.id.nav_third_fragment:
+//                Toast.makeText(ListActivity.this, "3", Toast.LENGTH_SHORT).show();
+//                break;
+//            default:
+//                Toast.makeText(ListActivity.this, "def", Toast.LENGTH_SHORT).show();
+//        }
+//
+//        try {
+//            fragment = (Fragment) fragmentClass.newInstance();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        // Insert the fragment by replacing any existing fragment
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+//
+//        // Highlight the selected item has been done by NavigationView
+//        menuItem.setChecked(true);
+//        // Set action bar title
+//        setTitle(menuItem.getTitle());
+//        // Close the navigation drawer
+//        mDrawer.closeDrawers();
+    }
+
 
     // Menu icons are inflated just as they were with actionbar
     @Override
@@ -160,6 +221,11 @@ public class ListActivity extends AppCompatActivity {
         if (id == R.id.action_search) {
             Toast.makeText(this, "Search clicked", Toast.LENGTH_LONG).show();
 
+            return true;
+        }
+        if(id == android.R.id.home) {
+            Toast.makeText(this, "home clicked", Toast.LENGTH_LONG).show();
+            mDrawer.openDrawer(GravityCompat.START);
             return true;
         }
         return super.onOptionsItemSelected(item);

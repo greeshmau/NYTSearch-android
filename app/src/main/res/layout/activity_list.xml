@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context="com.codepath.gumapathi.nytsearch.Activities.ListActivity">
     <include
+        android:id="@+id/drawer_layout"
+        layout="@layout/drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar_main"
         android:layout_width="match_parent"
