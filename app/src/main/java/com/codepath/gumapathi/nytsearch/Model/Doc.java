@@ -54,7 +54,7 @@ public class Doc {
     private Integer wordCount;
     @SerializedName("score")
     @Expose
-    private Integer score;
+    private Float score;
     @SerializedName("uri")
     @Expose
     private String uri;
@@ -174,11 +174,11 @@ public class Doc {
         this.wordCount = wordCount;
     }
 
-    public Integer getScore() {
+    public Float getScore() {
         return score;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(Float score) {
         this.score = score;
     }
 

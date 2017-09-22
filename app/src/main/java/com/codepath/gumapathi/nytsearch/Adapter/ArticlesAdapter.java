@@ -1,6 +1,13 @@
 package com.codepath.gumapathi.nytsearch.Adapter;
 
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,12 +47,12 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
         articleViewHolder.tvSnippet.setText(articlesList.get(position).getSnippet());
         String imageUri = "";
         if(!articlesList.get(position).getMultimedia().isEmpty()) {
-            Log.i("SAMY-media-out", articlesList.get(position).getMultimedia().get(0).getSubtype());
+            //Log.i("SAMY-media-out", articlesList.get(position).getMultimedia().get(0).getSubtype());
             for (Multimedium media : articlesList.get(position).getMultimedia()) {
-                Log.i("SAMY-media", media.getSubtype());
+                //Log.i("SAMY-media", media.getSubtype());
                 if (media.getSubtype().equals("thumbnail")) {
                     imageUri = "http://www.nytimes.com/" + media.getUrl();
-                    Log.i("SAMY-adp-else", imageUri);
+                    //Log.i("SAMY-adp-else", imageUri);
                 }
             }
 
@@ -60,7 +67,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
         }
         else {
         }
-
 
     }
 
@@ -80,7 +86,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
         return rcv;
     }
 
-    public class SingleArticleHolder extends RecyclerView.ViewHolder {
+    public class SingleArticleHolder extends RecyclerView.ViewHolder implements RecyclerView.OnClickListener{
         public TextView tvHeadline;
         public TextView tvSnippet;
         public ImageView ivArticleImage;
@@ -92,17 +98,40 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
             tvHeadline = (TextView) itemView.findViewById(R.id.tvHeadline);
             ivArticleImage = (ImageView) itemView.findViewById(R.id.ivArticleImage);
             //tvHeadline.setTypeface(typeFace);
-
             tvSnippet = (TextView) itemView.findViewById(R.id.tvSnippet);
+            itemView.setOnClickListener(this);
         }
 
-        /*@Override
+        @Override
         public void onClick(View view)
         {
-            Toast.makeText(view.getContext(),
-                    "Clicked Position = " + getPosition(), Toast.LENGTH_SHORT)
-                    .show();
-        }*/
+            Doc article = articlesList.get(getAdapterPosition());
+            // Use a CustomTabsIntent.Builder to configure CustomTabsIntent.
+            String url = article.getWebUrl(); //"https://www.codepath.com/";
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            builder.setToolbarColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));
+            // set toolbar color and/or setting custom actions before invoking build()
+            // Once ready, call CustomTabsIntent.Builder.build() to create a CustomTabsIntent
+            Bitmap bitmap = BitmapFactory.decodeResource(view.getResources(), R.drawable.ic_share_white_24dp);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, url);
+
+            int requestCode = 100;
+            PendingIntent pendingIntent = PendingIntent.getActivity(view.getContext(),
+                    requestCode,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            builder.setActionButton(bitmap, "uu", pendingIntent, false);
+            builder.addDefaultShareMenuItem();
+            CustomTabsIntent customTabsIntent = builder.build();
+            // and launch the desired Url with CustomTabsIntent.launchUrl()
+            customTabsIntent.launchUrl(view.getContext(), Uri.parse(url));
+            /*Toast.makeText(view.getContext(),
+                    "Clicked Position = " + getAdapterPosition(), Toast.LENGTH_SHORT)
+                    .show();*/
+        }
     }
 }
 

@@ -1,11 +1,10 @@
 package com.codepath.gumapathi.nytsearch.Helpers;
 
 /**
- * Created by gumapathi on 9/20/2017.
+ * Created by gumapathi on 9/22/2017.
  */
 
-public enum NewsDesks {
-    NONE,
+public enum NewsDesk {
     ARTS,
     SPORTS,
     FASHION

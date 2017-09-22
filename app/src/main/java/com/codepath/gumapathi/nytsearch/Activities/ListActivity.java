@@ -1,6 +1,9 @@
 package com.codepath.gumapathi.nytsearch.Activities;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -24,13 +27,15 @@ import com.codepath.gumapathi.nytsearch.Adapter.ArticlesAdapter;
 import com.codepath.gumapathi.nytsearch.Fragments.ArticleFilterDialogFragment;
 import com.codepath.gumapathi.nytsearch.Helpers.APIQueryStringBuilder;
 import com.codepath.gumapathi.nytsearch.Helpers.EndlessRecyclerViewScrollListener;
-import com.codepath.gumapathi.nytsearch.Helpers.NewsDesks;
+import com.codepath.gumapathi.nytsearch.Helpers.NewsDesk;
 import com.codepath.gumapathi.nytsearch.Model.ArticleResponse;
 import com.codepath.gumapathi.nytsearch.Model.Doc;
 import com.codepath.gumapathi.nytsearch.R;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,8 +68,22 @@ public class ListActivity extends AppCompatActivity {
 
     private EndlessRecyclerViewScrollListener scrollListener;
 
+    public static String ordinal(int i) {
+        String[] sufixes = new String[]{"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
+        switch (i % 100) {
+            case 11:
+            case 12:
+            case 13:
+                return i + "th";
+            default:
+                return i + sufixes[i % 10];
+
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        apiStringQuery = new APIQueryStringBuilder("", false, "", "");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -83,12 +102,15 @@ public class ListActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                searchArticles(apiStringQuery.getQueryString(),page);
+                //Toast.makeText(ListActivity.this, "endless scroll " + apiStringQuery.getQueryString(), Toast.LENGTH_SHORT).show();
+                searchArticles(apiStringQuery.getQueryString(), page);
             }
         };
         rvArticles.addOnScrollListener(scrollListener);
+        if(!isOnline() || !isNetworkAvailable()) {
+            Toast.makeText(ListActivity.this, "Please make sure your phone is online and can access internet.", Toast.LENGTH_LONG).show();
+        }
 
-        apiStringQuery = new APIQueryStringBuilder("", false, "","", new NewsDesks[]{NewsDesks.NONE});
     }
 
     // Menu icons are inflated just as they were with actionbar
@@ -105,7 +127,7 @@ public class ListActivity extends AppCompatActivity {
                 // perform query here
                 //pd.show();
                 apiStringQuery.setQueryTerm(query);
-                searchArticles(apiStringQuery.getQueryString(),0);
+                searchArticles(apiStringQuery.getQueryString(), 0);
                 Toast.makeText(ListActivity.this, "Searching! " + query, Toast.LENGTH_SHORT).show();
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
@@ -145,14 +167,90 @@ public class ListActivity extends AppCompatActivity {
 
     private void showFilterDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        alertDialog = ArticleFilterDialogFragment.newInstance("Some title");
+        alertDialog = ArticleFilterDialogFragment.newInstance("Filter");
+        /*tvBeginDate = (TextView) (alertDialog).getView().findViewById(R.id.tvBeginDate);
+        tvEndDate = (TextView) (alertDialog).getView().findViewById(R.id.tvEndDate);
+        swOldNew = (Switch) (alertDialog).getView().findViewById(R.id.swOldNew);
+        cbArts = (CheckBox) (alertDialog).getView().findViewById(R.id.cbArts);
+        cbFashion = (CheckBox) (alertDialog).getView().findViewById(R.id.cbFashion);
+        cbSports = (CheckBox) (alertDialog).getView().findViewById(R.id.cbSports);
+        */
         alertDialog.show(fm, "fragment_alert");
     }
 
     public void onApplyFilterClicked(View view) {
         tvBeginDate = (TextView) (alertDialog).getView().findViewById(R.id.tvBeginDate);
+        tvEndDate = (TextView) (alertDialog).getView().findViewById(R.id.tvEndDate);
+        swOldNew = (Switch) (alertDialog).getView().findViewById(R.id.swOldNew);
+        cbArts = (CheckBox) (alertDialog).getView().findViewById(R.id.cbArts);
+        cbFashion = (CheckBox) (alertDialog).getView().findViewById(R.id.cbFashion);
+        cbSports = (CheckBox) (alertDialog).getView().findViewById(R.id.cbSports);
 
-        apiStringQuery.setBeginDate(tvBeginDate.getText().toString());
+        String beginDate = tvBeginDate.getText().toString();
+        String endDate = tvEndDate.getText().toString();
+        boolean oldNew = swOldNew.isChecked();
+        boolean arts = cbArts.isChecked();
+        boolean fashion = cbFashion.isChecked();
+        boolean sports = cbSports.isChecked();
+
+        Log.i("SAMY-f bgndt", beginDate);
+        Log.i("SAMY-f enddt", endDate);
+        Log.i("SAMY-f ON", String.valueOf(oldNew));
+        Log.i("SAMY-f art", String.valueOf(arts));
+        Log.i("SAMY-f fash", String.valueOf(fashion));
+        Log.i("SAMY-f sport", String.valueOf(sports));
+
+        if(!beginDate.isEmpty() && !endDate.isEmpty())
+        try {
+            Date bgnDate;
+            Date edDate;
+            DateFormat format = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
+
+            bgnDate = format.parse(beginDate.replaceAll("(?<=\\d)(st|nd|rd|th)", ""));
+            edDate = format.parse(endDate.replaceAll("(?<=\\d)(st|nd|rd|th)", ""));
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(bgnDate);
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+            String tempMonth = month > 9 ? String.valueOf(month + 1) : "0" + String.valueOf(month + 1);
+            String tempDay = day > 9 ? String.valueOf(day) : "0" + String.valueOf(day);
+            beginDate = String.valueOf(year) + tempMonth + tempDay;
+
+            cal.setTime(edDate);
+            year = cal.get(Calendar.YEAR);
+            month = cal.get(Calendar.MONTH);
+            day = cal.get(Calendar.DAY_OF_MONTH);
+            tempMonth = month > 9 ? String.valueOf(month + 1) : "0" + String.valueOf(month + 1);
+            tempDay = day > 9 ? String.valueOf(day) : "0" + String.valueOf(day);
+            endDate = String.valueOf(year) +
+                    tempMonth +
+                    tempDay;
+
+            Log.i("SAMY-parBDT", beginDate);
+            Log.i("SAMY-pa-EDT", endDate);
+            apiStringQuery.setBeginDate(beginDate);
+            apiStringQuery.setEndDate(endDate);
+        } catch (ParseException ex) {
+            Log.i("SAMY-dateexception", ex.toString());
+        }
+
+        if(oldNew){
+            apiStringQuery.setOldestFirst(false);
+        }
+        else {
+            apiStringQuery.setOldestFirst(true);
+        }
+
+        if(arts)
+            apiStringQuery.addNewsDesks(NewsDesk.ARTS);
+        if(sports)
+            apiStringQuery.addNewsDesks(NewsDesk.SPORTS);
+        if(fashion)
+            apiStringQuery.addNewsDesks(NewsDesk.FASHION);
+
+        apiStringQuery.getQueryString();
         alertDialog.dismiss();
     }
 
@@ -160,6 +258,7 @@ public class ListActivity extends AppCompatActivity {
     }
 
     public void onCheckboxClicked(View view) {
+
     }
 
     public void onBeginDateClicked(View view) {
@@ -192,59 +291,14 @@ public class ListActivity extends AppCompatActivity {
         return new SimpleDateFormat("MMM", Locale.ENGLISH).format(date.getTime()) + " " + ordinal(Integer.parseInt(new SimpleDateFormat("dd", Locale.ENGLISH).format(date.getTime()))) + ", " + new SimpleDateFormat("yyyy", Locale.ENGLISH).format(date.getTime());
     }
 
-    /*public void loadNextSetOfArticles(int pageNum) {
+    private void searchArticles(String query, int pageNum) {
+
         OkHttpClient client = new OkHttpClient();
-        String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=054c6d1972c142b4a8c84bbb300c4d87" + "&page=" + pageNum;
-        Log.i("SAMY-againsearch", url);
+        String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json" + query;
         Request request = new Request.Builder()
                 .url(url)
                 .build();
-        Log.i("SAMY", "Searching articles");
-        client.newCall(request).enqueue(new Callback() {
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.i("SAMY", "Failed Search");
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, final Response response) throws IOException {
-                Log.i("SAMY", "response");
-                if (!response.isSuccessful()) {
-                    Log.i("SAMY", "unsuccessful" + response.toString());
-                    throw new IOException("Unexpected code " + response);
-                } else {
-                    Log.i("SAMY", "successful");
-                    Log.i("SAMY", "running on UI Thread");
-                    final ArticleResponse artResponse = gson.fromJson(response.body().charStream(), ArticleResponse.class);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-
-                                //JSONArray movieResults = json.getJSONArray("results");
-                                allArticles.addAll(artResponse.getResponse().getDocs());
-                                articlesAdapter.notifyDataSetChanged();
-                            } catch (Exception e) {
-                                Log.i("SAMY-error", e.toString());
-                                //e.printStackTrace();
-                            }
-                        }//end run()
-                    });//end runOnUiThread
-                }
-            }
-        });
-    }*/
-
-    private void searchArticles(String query,int pageNum) {
-
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder()
-                .url("https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=054c6d1972c142b4a8c84bbb300c4d87" + "&q=" + query)
-                .build();
-        Log.i("SAMY", "Searching articles");
+        Log.i("SAMY", "Searching articles " + url);
         client.newCall(request).enqueue(new Callback() {
 
             @Override
@@ -284,20 +338,25 @@ public class ListActivity extends AppCompatActivity {
         });
     }
 
-    public static String ordinal(int i) {
-        String[] sufixes = new String[]{"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
-        switch (i % 100) {
-            case 11:
-            case 12:
-            case 13:
-                return i + "th";
-            default:
-                return i + sufixes[i % 10];
-
-        }
+    private Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
-    class mBeginDateSetListener implements DatePickerDialog.OnDateSetListener {
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+        return false;
+    }
+
+    private class mBeginDateSetListener implements DatePickerDialog.OnDateSetListener {
 
         @Override
         public void onDateSet(DatePicker view, int datePickerYear, int monthOfYear,
@@ -312,7 +371,7 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
-    class mEndDateSetListener implements DatePickerDialog.OnDateSetListener {
+    private class mEndDateSetListener implements DatePickerDialog.OnDateSetListener {
 
         @Override
         public void onDateSet(DatePicker view, int datePickerYear, int monthOfYear,
@@ -322,8 +381,6 @@ public class ListActivity extends AppCompatActivity {
             int day = dayOfMonth;
             tvEndDate = (TextView) (alertDialog).getView().findViewById(R.id.tvEndDate);
             String endDate = getStringForDate(year, month, day);
-            Log.i("SAMY-endDate", endDate);
-            Log.i("SAMY-TVendDate", String.valueOf(tvEndDate.getHighlightColor()));
             tvEndDate.setText(endDate);
         }
     }
