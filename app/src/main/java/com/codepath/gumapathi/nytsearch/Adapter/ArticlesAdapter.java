@@ -4,7 +4,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
@@ -15,20 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.codepath.gumapathi.nytsearch.Model.Doc;
 import com.codepath.gumapathi.nytsearch.Model.Multimedium;
 import com.codepath.gumapathi.nytsearch.R;
-import com.squareup.picasso.Picasso;
-import com.bumptech.glide.Glide;
 
-import java.io.File;
 import java.util.List;
-
-import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
-
-import static java.security.AccessController.getContext;
 
 /**
  * Created by gumapathi on 9/13/2017.
@@ -57,15 +49,17 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
             }
 
             ImageView ivArticleImage = articleViewHolder.ivArticleImage;
-            Glide.with(articleViewHolder.ivArticleImage.getContext()).load(imageUri).into(ivArticleImage);
-            /*Picasso.with(articleViewHolder.ivArticleImage.getContext())
-                .load(imageUri)
-                //.placeholder(R.drawable.placeholder)
-                //.transform(new RoundedCornersTransformation(15, 15, RoundedCornersTransformation.CornerType.ALL))
-                .into(ivArticleImage);
-                */
+            ivArticleImage.setImageResource(0);
+            Glide.with(articleViewHolder.ivArticleImage.getContext())
+                    .load(imageUri)
+                    .override(400,500)
+                    .centerCrop()
+                    .fitCenter()
+                    .into(ivArticleImage);
         }
         else {
+            ImageView ivArticleImage = articleViewHolder.ivArticleImage;
+            ivArticleImage.setImageResource(0);
         }
 
     }
@@ -74,7 +68,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
     public int getItemCount() {
         return this.articlesList.size();
     }
-
 
 
     @Override
@@ -108,23 +101,23 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
             Doc article = articlesList.get(getAdapterPosition());
             // Use a CustomTabsIntent.Builder to configure CustomTabsIntent.
             String url = article.getWebUrl(); //"https://www.codepath.com/";
+            Log.i("SAMY-click", "onClick: "+url);
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
             builder.setToolbarColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));
             // set toolbar color and/or setting custom actions before invoking build()
             // Once ready, call CustomTabsIntent.Builder.build() to create a CustomTabsIntent
-            Bitmap bitmap = BitmapFactory.decodeResource(view.getResources(), R.drawable.ic_share_white_24dp);
+
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_TEXT, url);
-
             int requestCode = 100;
             PendingIntent pendingIntent = PendingIntent.getActivity(view.getContext(),
                     requestCode,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
+            Bitmap bitmap = BitmapFactory.decodeResource(view.getResources(), R.drawable.ic_share);
+            builder.setActionButton(bitmap, "Share Link", pendingIntent, true);
 
-            builder.setActionButton(bitmap, "uu", pendingIntent, false);
-            builder.addDefaultShareMenuItem();
             CustomTabsIntent customTabsIntent = builder.build();
             // and launch the desired Url with CustomTabsIntent.launchUrl()
             customTabsIntent.launchUrl(view.getContext(), Uri.parse(url));

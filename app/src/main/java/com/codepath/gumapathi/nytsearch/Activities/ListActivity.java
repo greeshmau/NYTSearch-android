@@ -6,7 +6,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -360,7 +359,13 @@ public class ListActivity extends AppCompatActivity {
     private void searchArticles(String query, int pageNum) {
 
         OkHttpClient client = new OkHttpClient();
-        String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json" + query;
+        String url = "";
+        if(pageNum == 0) {
+            url = "https://api.nytimes.com/svc/search/v2/articlesearch.json" + query;
+        }
+        else {
+            url = "https://api.nytimes.com/svc/search/v2/articlesearch.json" + query + "&page=" + pageNum;
+        }
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -415,10 +420,13 @@ public class ListActivity extends AppCompatActivity {
         Runtime runtime = Runtime.getRuntime();
         try {
             Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
+            int exitValue = ipProcess.waitFor();
             return (exitValue == 0);
-        } catch (IOException e)          { e.printStackTrace(); }
-        catch (InterruptedException e) { e.printStackTrace(); }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 

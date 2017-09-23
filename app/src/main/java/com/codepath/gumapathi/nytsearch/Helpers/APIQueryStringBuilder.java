@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * Created by gumapathi on 9/20/2017.
  */
-
 public class APIQueryStringBuilder {
     String queryTerm;
     boolean oldestFirst;
@@ -62,32 +61,6 @@ public class APIQueryStringBuilder {
             this.newsDesks.add(newsDesk);
         }
     }
-
-
-    /*public boolean isArt() {
-        return art;
-    }
-
-    public void setArt(boolean art) {
-        this.art = art;
-    }
-
-    public boolean isFashion() {
-        return fashion;
-    }
-
-    public void setFashion(boolean fashion) {
-        this.fashion = fashion;
-    }
-
-    public boolean isSports() {
-        return sports;
-    }
-
-    public void setSports(boolean oldestFirst) {
-        this.sports = sports;
-    }
-    */
 
     public APIQueryStringBuilder(  String queryTerm, boolean oldestFirst, String beginDate,
             String endDate) {
