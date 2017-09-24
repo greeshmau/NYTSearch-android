@@ -12,10 +12,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.codepath.gumapathi.nytsearch.Database.Favorites;
 import com.codepath.gumapathi.nytsearch.Model.Doc;
 import com.codepath.gumapathi.nytsearch.Model.Multimedium;
 import com.codepath.gumapathi.nytsearch.R;
@@ -83,6 +86,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
         public TextView tvHeadline;
         public TextView tvSnippet;
         public ImageView ivArticleImage;
+        public ImageButton ibFav;
 
         public SingleArticleHolder(View itemView)
         {
@@ -92,6 +96,18 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
             ivArticleImage = (ImageView) itemView.findViewById(R.id.ivArticleImage);
             //tvHeadline.setTypeface(typeFace);
             tvSnippet = (TextView) itemView.findViewById(R.id.tvSnippet);
+            ibFav = (ImageButton) itemView.findViewById(R.id.ibFav);
+            ibFav.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Doc article = articlesList.get(getAdapterPosition());
+                    String url = article.getWebUrl();
+                    String title = article.getHeadline().getMain();
+                    Favorites newFav = new Favorites(title,url);
+                    newFav.save();
+                    Toast.makeText(v.getContext(), "Favorite", Toast.LENGTH_LONG).show();
+                }
+            });
             itemView.setOnClickListener(this);
         }
 
@@ -99,13 +115,10 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
         public void onClick(View view)
         {
             Doc article = articlesList.get(getAdapterPosition());
-            // Use a CustomTabsIntent.Builder to configure CustomTabsIntent.
             String url = article.getWebUrl(); //"https://www.codepath.com/";
             Log.i("SAMY-click", "onClick: "+url);
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
             builder.setToolbarColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));
-            // set toolbar color and/or setting custom actions before invoking build()
-            // Once ready, call CustomTabsIntent.Builder.build() to create a CustomTabsIntent
 
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");

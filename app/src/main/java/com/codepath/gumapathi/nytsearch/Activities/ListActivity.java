@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -27,7 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.gumapathi.nytsearch.Adapter.ArticlesAdapter;
+import com.codepath.gumapathi.nytsearch.Database.Favorites;
 import com.codepath.gumapathi.nytsearch.Fragments.ArticleFilterDialogFragment;
+import com.codepath.gumapathi.nytsearch.Fragments.FavoriteItemFragment;
 import com.codepath.gumapathi.nytsearch.Helpers.APIQueryStringBuilder;
 import com.codepath.gumapathi.nytsearch.Helpers.EndlessRecyclerViewScrollListener;
 import com.codepath.gumapathi.nytsearch.Helpers.NewsDesk;
@@ -100,7 +103,9 @@ public class ListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        //setupDrawerContent(nvDrawer);
+
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        setupDrawerContent(nvDrawer);
 
 
         RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
@@ -126,10 +131,12 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
+        Log.i("Samy-nav",navigationView.toString());
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        Log.i("Samy-nav",menuItem.getTitle().toString());
                         selectDrawerItem(menuItem);
                         return true;
                     }
@@ -137,39 +144,43 @@ public class ListActivity extends AppCompatActivity {
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
-//        // Create a new fragment and specify the fragment to show based on nav item clicked
-//        Fragment fragment = null;
-//        Class fragmentClass;
-//        switch(menuItem.getItemId()) {
-//            case R.id.nav_first_fragment:
-//                Toast.makeText(ListActivity.this, "First", Toast.LENGTH_SHORT).show();
-//                break;
-//            case R.id.nav_second_fragment:
-//                Toast.makeText(ListActivity.this, "2", Toast.LENGTH_SHORT).show();
-//                break;
-//            case R.id.nav_third_fragment:
-//                Toast.makeText(ListActivity.this, "3", Toast.LENGTH_SHORT).show();
-//                break;
-//            default:
-//                Toast.makeText(ListActivity.this, "def", Toast.LENGTH_SHORT).show();
-//        }
-//
-//        try {
-//            fragment = (Fragment) fragmentClass.newInstance();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        // Insert the fragment by replacing any existing fragment
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-//
-//        // Highlight the selected item has been done by NavigationView
-//        menuItem.setChecked(true);
-//        // Set action bar title
-//        setTitle(menuItem.getTitle());
-//        // Close the navigation drawer
-//        mDrawer.closeDrawers();
+        // Create a new fragment and specify the fragment to show based on nav item clicked
+        Fragment fragment = null;
+        Class fragmentClass;
+        switch(menuItem.getItemId()) {
+            case R.id.nav_first_fragment:
+                fragmentClass = FavoriteItemFragment.class;
+                Toast.makeText(ListActivity.this, "First", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_second_fragment:
+                fragmentClass = FavoriteItemFragment.class;
+                Toast.makeText(ListActivity.this, "2", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_third_fragment:
+                fragmentClass = FavoriteItemFragment.class;
+                Toast.makeText(ListActivity.this, "3", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                fragmentClass = FavoriteItemFragment.class;
+                Toast.makeText(ListActivity.this, "def", Toast.LENGTH_SHORT).show();
+        }
+
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+        // Highlight the selected item has been done by NavigationView
+        menuItem.setChecked(true);
+        // Set action bar title
+        setTitle(menuItem.getTitle());
+        // Close the navigation drawer
+        mDrawer.closeDrawers();
     }
 
 
@@ -189,13 +200,9 @@ public class ListActivity extends AppCompatActivity {
                 apiStringQuery.setQueryTerm(query);
                 searchArticles(apiStringQuery.getQueryString(), 0);
                 Toast.makeText(ListActivity.this, "Searching! " + query, Toast.LENGTH_SHORT).show();
-                // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
-                // see https://code.google.com/p/android/issues/detail?id=24599
                 searchView.clearFocus();
-
                 return true;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
@@ -210,16 +217,11 @@ public class ListActivity extends AppCompatActivity {
 
         if (id == R.id.action_filter) {
             Toast.makeText(this, "Filtering clicked", Toast.LENGTH_LONG).show();
-            //Intent i = new Intent(this, FilterDialogFragmentActivity.class);
-            //i.putExtra("EditingTitle", "Test");
-            //startActivityForResult(i, FILTER_CODE);
-
             showFilterDialog();
         }
 
         if (id == R.id.action_search) {
             Toast.makeText(this, "Search clicked", Toast.LENGTH_LONG).show();
-
             return true;
         }
         if(id == android.R.id.home) {

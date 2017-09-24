@@ -7,17 +7,24 @@
     android:layout_height="wrap_content"
     card_view:cardUseCompatPadding="true">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:orientation="vertical">
 
+        <ImageButton
+            android:id="@+id/ibFav"
+            android:background="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            card_view:srcCompat="@drawable/ic_favorite_border_black_24dp" />
+
         <ImageView
             android:id="@+id/ivArticleImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="20dp"
             android:adjustViewBounds="true"
             tools:src="@drawable/placeholder"
             />
@@ -28,6 +35,7 @@
             android:layout_height="wrap_content"
             android:background="#1976D2"
             android:gravity="center_horizontal"
+            android:layout_below="@+id/ivArticleImage"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:fontFamily=""
@@ -37,6 +45,7 @@
 
         <TextView
             android:id="@+id/tvSnippet"
+            android:layout_below="@+id/tvHeadline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -47,6 +56,5 @@
             android:text="@string/hello_world"
             android:textColor="#000000"
             android:textSize="13sp" />
-    </LinearLayout>
-
+    </RelativeLayout>
 </android.support.v7.widget.CardView>
