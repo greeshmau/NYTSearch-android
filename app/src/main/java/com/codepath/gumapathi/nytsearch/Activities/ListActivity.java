@@ -2,6 +2,8 @@ package com.codepath.gumapathi.nytsearch.Activities;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -28,9 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.gumapathi.nytsearch.Adapter.ArticlesAdapter;
-import com.codepath.gumapathi.nytsearch.Database.Favorites;
 import com.codepath.gumapathi.nytsearch.Fragments.ArticleFilterDialogFragment;
-import com.codepath.gumapathi.nytsearch.Fragments.FavoriteItemFragment;
 import com.codepath.gumapathi.nytsearch.Helpers.APIQueryStringBuilder;
 import com.codepath.gumapathi.nytsearch.Helpers.EndlessRecyclerViewScrollListener;
 import com.codepath.gumapathi.nytsearch.Helpers.NewsDesk;
@@ -53,12 +53,12 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
-//import android.support.v7.widget.
-
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class ListActivity extends AppCompatActivity {
+
     final Gson gson = new Gson();
+
     //ProgressDialog pd = new ProgressDialog(this);
     ArticleFilterDialogFragment alertDialog;
     ArticlesAdapter articlesAdapter;
@@ -76,6 +76,11 @@ public class ListActivity extends AppCompatActivity {
     private APIQueryStringBuilder apiStringQuery;
 
     private EndlessRecyclerViewScrollListener scrollListener;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     public static String ordinal(int i) {
         String[] sufixes = new String[]{"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
@@ -95,18 +100,21 @@ public class ListActivity extends AppCompatActivity {
         apiStringQuery = new APIQueryStringBuilder("", false, "", "");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
+        Drawable myIcon = getResources().getDrawable( R.drawable.ic_dehaze_black_24dp );
+        getSupportActionBar().setHomeAsUpIndicator(myIcon);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setElevation(0);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
+        getSupportActionBar().setTitle("Home");
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
-
 
         RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
         allArticles = new ArrayList<>();
@@ -149,31 +157,19 @@ public class ListActivity extends AppCompatActivity {
         Class fragmentClass;
         switch(menuItem.getItemId()) {
             case R.id.nav_first_fragment:
-                fragmentClass = FavoriteItemFragment.class;
                 Toast.makeText(ListActivity.this, "First", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_second_fragment:
-                fragmentClass = FavoriteItemFragment.class;
+                Intent favItem = new Intent(this, FavoriteListActivity.class);
+                startActivity(favItem);
                 Toast.makeText(ListActivity.this, "2", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_third_fragment:
-                fragmentClass = FavoriteItemFragment.class;
                 Toast.makeText(ListActivity.this, "3", Toast.LENGTH_SHORT).show();
                 break;
             default:
-                fragmentClass = FavoriteItemFragment.class;
                 Toast.makeText(ListActivity.this, "def", Toast.LENGTH_SHORT).show();
         }
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);

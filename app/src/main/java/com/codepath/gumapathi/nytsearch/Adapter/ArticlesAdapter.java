@@ -35,6 +35,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
     public ArticlesAdapter(List<Doc> articlesList) {
         this.articlesList = articlesList;
     }
+    
 
     @Override
     public void onBindViewHolder(SingleArticleHolder articleViewHolder, int position) {
@@ -77,7 +78,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Single
     public SingleArticleHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View layoutView = LayoutInflater.
                 from(viewGroup.getContext()).
-                inflate(R.layout.article_item, viewGroup, false);
+                inflate(R.layout.article_item_with_image, viewGroup, false);
         SingleArticleHolder rcv = new SingleArticleHolder(layoutView);
         return rcv;
     }

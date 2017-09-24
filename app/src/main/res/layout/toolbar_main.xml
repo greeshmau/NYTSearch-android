@@ -10,4 +10,5 @@
     android:minHeight="?attr/actionBarSize"
     app:contentInsetLeft="0dp"
     app:contentInsetStart="0dp"
-    app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
+    app:titleTextColor="@android:color/white">
+</android.support.v7.widget.Toolbar>
