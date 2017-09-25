@@ -125,16 +125,13 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             //tvHeadline.setTypeface(typeFace);
             tvSnippet = (TextView) itemView.findViewById(R.id.tvSnippet);
             ibFav = (ImageButton) itemView.findViewById(R.id.ibFav);
-            ibFav.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Doc article = articlesList.get(getAdapterPosition());
-                    String url = article.getWebUrl();
-                    String title = article.getHeadline().getMain();
-                    Favorites newFav = new Favorites(title,url);
-                    newFav.save();
-                    Toast.makeText(v.getContext(), "Favorite", Toast.LENGTH_LONG).show();
-                }
+            ibFav.setOnClickListener(v -> {
+                Doc article = articlesList.get(getAdapterPosition());
+                String url = article.getWebUrl();
+                String title = article.getHeadline().getMain();
+                Favorites newFav = new Favorites(title,url);
+                newFav.save();
+                Toast.makeText(v.getContext(), "Favorite", Toast.LENGTH_LONG).show();
             });
             itemView.setOnClickListener(this);
         }
@@ -185,16 +182,13 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             tvSnippet = (TextView) itemView.findViewById(R.id.tvSnippet);
             ibFav = (ImageButton) itemView.findViewById(R.id.ibFav);
-            ibFav.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Doc article = articlesList.get(getAdapterPosition());
-                    String url = article.getWebUrl();
-                    String title = article.getHeadline().getMain();
-                    Favorites newFav = new Favorites(title,url);
-                    newFav.save();
-                    Toast.makeText(v.getContext(), "Favorite", Toast.LENGTH_LONG).show();
-                }
+            ibFav.setOnClickListener(v -> {
+                Doc article = articlesList.get(getAdapterPosition());
+                String url = article.getWebUrl();
+                String title = article.getHeadline().getMain();
+                Favorites newFav = new Favorites(title,url);
+                newFav.save();
+                Toast.makeText(v.getContext(), "Favorite", Toast.LENGTH_LONG).show();
             });
             itemView.setOnClickListener(this);
         }

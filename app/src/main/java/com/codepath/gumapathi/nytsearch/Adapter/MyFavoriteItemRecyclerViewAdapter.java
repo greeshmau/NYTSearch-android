@@ -43,37 +43,34 @@ public class MyFavoriteItemRecyclerViewAdapter extends RecyclerView.Adapter<MyFa
         holder.mIdView.setText(String.valueOf(fav.id));
         holder.mContentView.setText(fav.ArticleTitle);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = fav.ArticleURL;
-                Log.i("SAMY-click", "onClick: "+url);
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                TypedValue typedValue = new TypedValue();
-                Resources.Theme theme = v.getContext().getTheme();
-                theme.resolveAttribute(R.attr.backgroundCardColor, typedValue, true);
-                @ColorInt int color = typedValue.data;
-                builder.setToolbarColor(color);
+        holder.mView.setOnClickListener(v -> {
+            String url = fav.ArticleURL;
+            Log.i("SAMY-click", "onClick: "+url);
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            TypedValue typedValue = new TypedValue();
+            Resources.Theme theme = v.getContext().getTheme();
+            theme.resolveAttribute(R.attr.backgroundCardColor, typedValue, true);
+            @ColorInt int color = typedValue.data;
+            builder.setToolbarColor(color);
 
 
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT, url);
-                int requestCode = 100;
-                PendingIntent pendingIntent = PendingIntent.getActivity(v.getContext(),
-                        requestCode,
-                        intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-                Bitmap bitmap = BitmapFactory.decodeResource(v.getResources(), R.drawable.ic_share);
-                builder.setActionButton(bitmap, "Share Link", pendingIntent, true);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, url);
+            int requestCode = 100;
+            PendingIntent pendingIntent = PendingIntent.getActivity(v.getContext(),
+                    requestCode,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            Bitmap bitmap = BitmapFactory.decodeResource(v.getResources(), R.drawable.ic_share);
+            builder.setActionButton(bitmap, "Share Link", pendingIntent, true);
 
-                CustomTabsIntent customTabsIntent = builder.build();
-                // and launch the desired Url with CustomTabsIntent.launchUrl()
-                customTabsIntent.launchUrl(v.getContext(), Uri.parse(url));
-            /*Toast.makeText(view.getContext(),
-                    "Clicked Position = " + getAdapterPosition(), Toast.LENGTH_SHORT)
-                    .show();*/
-            }
+            CustomTabsIntent customTabsIntent = builder.build();
+            // and launch the desired Url with CustomTabsIntent.launchUrl()
+            customTabsIntent.launchUrl(v.getContext(), Uri.parse(url));
+        /*Toast.makeText(view.getContext(),
+                "Clicked Position = " + getAdapterPosition(), Toast.LENGTH_SHORT)
+                .show();*/
         });
     }
 

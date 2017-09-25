@@ -3,6 +3,7 @@ package com.codepath.gumapathi.nytsearch.Activities;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -80,7 +82,7 @@ public class ListActivity extends AppCompatActivity {
     private NavigationView nvDrawer;
     private TextView toolbar_title;
     private APIQueryStringBuilder apiStringQuery;
-
+    private boolean isNightModeEnabled = false;
     private EndlessRecyclerViewScrollListener scrollListener;
 
     public static String ordinal(int i) {
@@ -106,11 +108,16 @@ public class ListActivity extends AppCompatActivity {
         apiStringQuery = new APIQueryStringBuilder("", false, "", "");
         super.onCreate(savedInstanceState);
         Calendar cal = Calendar.getInstance();
+        SharedPreferences mPrefs =  PreferenceManager.getDefaultSharedPreferences(this);
+        this.isNightModeEnabled = mPrefs.getBoolean("NIGHT_MODE", false);
+
         Log.i("SAMY_time",String.valueOf(cal.getTime().getHours()));
-        if(cal.getTime().getHours() > 12) {
+        if(isNightModeEnabled) {
+            Log.i("SAMY_nightMode","inhere");
             this.setTheme(R.style.AppTheme_Primary_Base_Dark);
         }
         else {
+            Log.i("SAMY_dayMode","inhere-day");
             this.setTheme(R.style.AppTheme_Primary_Base_Light);
         }
         setContentView(R.layout.activity_list);
@@ -198,14 +205,20 @@ public class ListActivity extends AppCompatActivity {
                 Toast.makeText(ListActivity.this, "2", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_third_fragment:
+                SharedPreferences mPrefs =  PreferenceManager.getDefaultSharedPreferences(this);
+                mPrefs.edit().putBoolean("NIGHT_MODE", true).apply();
                 this.setTheme(R.style.AppTheme_Primary_Base_Dark);
-                //recreate();
-                Toast.makeText(ListActivity.this, "3", Toast.LENGTH_SHORT).show();
+                this.finish();
+                this.startActivity(new Intent(this, this.getClass()));
+                //Toast.makeText(ListActivity.this, "3", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_fourth_fragment:
+                SharedPreferences mPrefss =  PreferenceManager.getDefaultSharedPreferences(this);
+                mPrefss.edit().putBoolean("NIGHT_MODE", false).apply();
                 this.setTheme(R.style.AppTheme_Primary_Base_Light);
-                //recreate();
-                Toast.makeText(ListActivity.this, "3", Toast.LENGTH_SHORT).show();
+                this.finish();
+                this.startActivity(new Intent(this, this.getClass()));
+                //Toast.makeText(ListActivity.this, "3", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 Toast.makeText(ListActivity.this, "def", Toast.LENGTH_SHORT).show();
@@ -291,16 +304,16 @@ public class ListActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_filter) {
-            Toast.makeText(this, "Filtering clicked", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Filtering clicked", Toast.LENGTH_LONG).show();
             showFilterDialog();
         }
 
         if (id == R.id.action_search) {
-            Toast.makeText(this, "Search clicked", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Search clicked", Toast.LENGTH_LONG).show();
             return true;
         }
         if (id == android.R.id.home) {
-            Toast.makeText(this, "home clicked", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "home clicked", Toast.LENGTH_LONG).show();
             mDrawer.openDrawer(GravityCompat.START);
             return true;
         }
