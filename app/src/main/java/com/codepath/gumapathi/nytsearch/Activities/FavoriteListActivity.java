@@ -21,9 +21,9 @@ import com.codepath.gumapathi.nytsearch.Database.Favorites;
 import com.codepath.gumapathi.nytsearch.R;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import java.util.Calendar;
 import java.util.List;
 
+import static com.codepath.gumapathi.nytsearch.Activities.ListActivity.isNightModeEnabled;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 
@@ -36,7 +36,17 @@ public class FavoriteListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //SharedPreferences mPrefs =  PreferenceManager.getDefaultSharedPreferences(this);
+        //isNightModeEnabled = mPrefs.getBoolean("NIGHT_MODE", false);
 
+        if(isNightModeEnabled) {
+            Log.i("SAMY_nightMode","inhere");
+            this.setTheme(R.style.AppTheme_Primary_Base_Dark);
+        }
+        else {
+            Log.i("SAMY_dayMode","inhere-day");
+            this.setTheme(R.style.AppTheme_Primary_Base_Light);
+        }
         setContentView(R.layout.activity_favorite_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

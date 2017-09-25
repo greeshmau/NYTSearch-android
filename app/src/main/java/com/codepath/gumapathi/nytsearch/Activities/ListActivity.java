@@ -84,7 +84,7 @@ public class ListActivity extends AppCompatActivity {
     private NavigationView nvDrawer;
     private TextView toolbar_title;
     private APIQueryStringBuilder apiStringQuery;
-    private boolean isNightModeEnabled = false;
+    public static boolean isNightModeEnabled = false;
     private EndlessRecyclerViewScrollListener scrollListener;
 
     public static String ordinal(int i) {
@@ -109,11 +109,10 @@ public class ListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         apiStringQuery = new APIQueryStringBuilder("", false, "", "");
         super.onCreate(savedInstanceState);
-        Calendar cal = Calendar.getInstance();
+
         SharedPreferences mPrefs =  PreferenceManager.getDefaultSharedPreferences(this);
         this.isNightModeEnabled = mPrefs.getBoolean("NIGHT_MODE", false);
 
-        Log.i("SAMY_time",String.valueOf(cal.getTime().getHours()));
         if(isNightModeEnabled) {
             Log.i("SAMY_nightMode","inhere");
             this.setTheme(R.style.AppTheme_Primary_Base_Dark);
