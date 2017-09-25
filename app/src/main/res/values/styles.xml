@@ -29,6 +29,7 @@
         <item name="calIconPlaceHolder">@drawable/ic_today_black_24dp</item>
         <item name="backIconPlaceHolder">@drawable/ic_arrow_back_black_16dp</item>
         <item name="closeIconPlaceHolder">@drawable/ic_close_black_16dp</item>
+        <item name="voiceIconPlaceHolder">@drawable/ic_keyboard_voice_black_16dp</item>
         <item name="dividerColor">#F2F2F3</item>
         <item name="greyColor">#F2F2F3</item>
     </style>
@@ -48,6 +49,7 @@
         <item name="calIconPlaceHolder">@drawable/ic_today_white_24dp</item>
         <item name="backIconPlaceHolder">@drawable/ic_arrow_back_white_16dp</item>
         <item name="closeIconPlaceHolder">@drawable/ic_close_white_16dp</item>
+        <item name="voiceIconPlaceHolder">@drawable/ic_keyboard_voice_white_16dp</item>
         <item name="dividerColor">#F2F2F3</item>
         <item name="greyColor">@android:color/darker_gray</item>
     </style>

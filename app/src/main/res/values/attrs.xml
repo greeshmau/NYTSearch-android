@@ -17,5 +17,6 @@
         <attr name="calIconPlaceHolder" format="integer" />
         <attr name="backIconPlaceHolder" format="integer" />
         <attr name="closeIconPlaceHolder" format="integer"/>
+        <attr name="voiceIconPlaceHolder" format="integer"/>
     </declare-styleable>
 </resources>

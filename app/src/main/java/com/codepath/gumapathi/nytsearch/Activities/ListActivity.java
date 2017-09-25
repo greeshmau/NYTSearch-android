@@ -1,6 +1,8 @@
 package com.codepath.gumapathi.nytsearch.Activities;
 
 import android.app.DatePickerDialog;
+import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -121,6 +123,7 @@ public class ListActivity extends AppCompatActivity {
             this.setTheme(R.style.AppTheme_Primary_Base_Light);
         }
         setContentView(R.layout.activity_list);
+
         //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -147,17 +150,6 @@ public class ListActivity extends AppCompatActivity {
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
 
-        /*Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            apiStringQuery.setQueryTerm(query);
-            searchArticles(apiStringQuery.getQueryString(), 0);
-            Toast.makeText(ListActivity.this, "Voice search " + query, Toast.LENGTH_SHORT).show();
-        } else {
-            //clear only on new activity launches
-            //filterPreferences.edit().clear().commit();
-        }*/
-
         RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
         allArticles = new ArrayList<>();
         StaggeredGridLayoutManager staggeredGridLayoutManager =
@@ -176,6 +168,13 @@ public class ListActivity extends AppCompatActivity {
         rvArticles.addOnScrollListener(scrollListener);
         if (!isOnline() || !isNetworkAvailable()) {
             Toast.makeText(ListActivity.this, "Please make sure your phone is online and can access internet.", Toast.LENGTH_LONG).show();
+        }
+
+        if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
+            String query = getIntent().getStringExtra(SearchManager.QUERY);
+            Log.i("SAMy", query);
+            apiStringQuery.setQueryTerm(query);
+            searchArticles(apiStringQuery.getQueryString(), 0);
         }
 
     }
@@ -242,6 +241,13 @@ public class ListActivity extends AppCompatActivity {
 
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
+//        / Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        // Assumes current activity is the searchable activity
+        ComponentName cn = new ComponentName(this, ListActivity.class);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = this.getTheme();
         theme.resolveAttribute(R.attr.primaryTextColor, typedValue, true);
@@ -272,6 +278,13 @@ public class ListActivity extends AppCompatActivity {
         ta.recycle();
         mCloseButton.setImageDrawable(drawableFromTheme);
 
+        ImageView mVoiceButton = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_voice_btn);
+        attrs = new int[]{R.attr.voiceIconPlaceHolder};
+        ta = this.obtainStyledAttributes(attrs);
+        drawableFromTheme = ta.getDrawable(0 );
+        ta.recycle();
+        mCloseButton.setImageDrawable(drawableFromTheme);
+
         View searchPlate = searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
         searchPlate.setBackgroundColor(Color.TRANSPARENT);
 
@@ -279,11 +292,8 @@ public class ListActivity extends AppCompatActivity {
             //Log ("SAMY", "Searching articles");
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // perform query here
-                //pd.show();
                 allArticles.clear();
                 articlesAdapter.notifyDataSetChanged();
-                //rvArticles.no
                 apiStringQuery.setQueryTerm(query.trim());
                 searchArticles(apiStringQuery.getQueryString(), 0);
                 Toast.makeText(ListActivity.this, "Searching! " + query, Toast.LENGTH_SHORT).show();
