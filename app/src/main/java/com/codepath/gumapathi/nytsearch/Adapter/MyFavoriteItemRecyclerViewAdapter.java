@@ -2,13 +2,15 @@ package com.codepath.gumapathi.nytsearch.Adapter;
 
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.support.annotation.ColorInt;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +49,12 @@ public class MyFavoriteItemRecyclerViewAdapter extends RecyclerView.Adapter<MyFa
                 String url = fav.ArticleURL;
                 Log.i("SAMY-click", "onClick: "+url);
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                builder.setToolbarColor(ContextCompat.getColor(v.getContext(), R.color.colorAccent));
+                TypedValue typedValue = new TypedValue();
+                Resources.Theme theme = v.getContext().getTheme();
+                theme.resolveAttribute(R.attr.backgroundCardColor, typedValue, true);
+                @ColorInt int color = typedValue.data;
+                builder.setToolbarColor(color);
+
 
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");

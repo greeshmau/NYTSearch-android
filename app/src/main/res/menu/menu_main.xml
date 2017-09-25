@@ -6,13 +6,15 @@
     <item
         android:id="@+id/action_search"
         android:enabled="true"
-        android:icon="@drawable/ic_search_white_36px"
+        android:icon="?attr/searchIconPlaceHolder"
         android:title="@string/search_label"
+        android:textColor="?attr/primaryTextColor"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_filter"
+        app:showAsAction="ifRoom|collapseActionView" />
+    <item
+        android:id="@+id/action_filter"
         android:title="@string/filter_label"
         android:enabled="true"
-        android:icon="@drawable/ic_filter_list_white_24dp"
-        app:showAsAction="ifRoom" />
+        android:icon="?attr/filterIconPlaceHolder"
+        app:showAsAction="ifRoom|collapseActionView" />
 </menu>

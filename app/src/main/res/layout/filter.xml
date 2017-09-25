@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?attr/backgroundCardColor"
     android:orientation="vertical">
 
     <LinearLayout
@@ -16,13 +17,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:theme="?attr/primaryTextColor"
             android:onClick="onSwitchClicked"
-            android:text="@string/oldest_first" />
+            android:shadowColor="?attr/primaryTextColor"
+            android:text="@string/oldest_first"
+            android:textColor="?attr/primaryTextColor"
+            android:textColorHint="?attr/primaryTextColor" />
 
         <TextView
             android:id="@+id/tvNewestText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="?attr/primaryTextColor"
             android:text="@string/newest_first" />
     </LinearLayout>
 
@@ -48,6 +54,7 @@
                 android:id="@+id/tvBeginDateText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="?attr/primaryTextColor"
                 android:text="@string/begin_date" />
 
             <ImageButton
@@ -57,12 +64,13 @@
                 android:contentDescription="@string/begin_date"
                 android:background="@android:color/transparent"
                 android:onClick="onBeginDateClicked"
-                android:src="@drawable/ic_today_black_24dp" />
+                android:src="?attr/calIconPlaceHolder" />
 
             <TextView
                 android:id="@+id/tvBeginDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="?attr/primaryTextColor"
                 tools:text="09/19/2016" />
         </LinearLayout>
 
@@ -77,6 +85,7 @@
                 android:id="@+id/tvEndDateText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="?attr/primaryTextColor"
                 android:text="@string/end_date" />
 
             <ImageButton
@@ -86,13 +95,14 @@
                 android:contentDescription="@string/end_date"
                 android:background="@android:color/transparent"
                 android:onClick="onEndDateClicked"
-                android:src="@drawable/ic_today_black_24dp"
+                android:src="?attr/calIconPlaceHolder"
                  />
 
             <TextView
                 android:id="@+id/tvEndDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="?attr/primaryTextColor"
                 tools:text="09/19/2017" />
         </LinearLayout>
     </LinearLayout>
@@ -111,27 +121,43 @@
             android:layout_gravity="center_vertical"
             android:textAlignment="center"
             android:layout_weight="1"
+            android:textColor="?attr/primaryTextColor"
             android:text="@string/news_desk"/>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
-            <CheckBox android:id="@+id/cbArts"
+
+            <CheckBox
+                android:id="@+id/cbArts"
+                android:buttonTint="?attr/primaryTextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="onCheckboxClicked"
+                android:shadowColor="?attr/primaryTextColor"
                 android:text="@string/label_art"
-                android:onClick="onCheckboxClicked"/>
-            <CheckBox android:id="@+id/cbSports"
+                android:textColor="?attr/primaryTextColor" />
+
+            <CheckBox
+                android:id="@+id/cbSports"
+                android:buttonTint="?attr/primaryTextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="onCheckboxClicked"
+                android:shadowColor="?attr/primaryTextColor"
                 android:text="@string/label_sport"
-                android:onClick="onCheckboxClicked"/>
-            <CheckBox android:id="@+id/cbFashion"
+                android:textColor="?attr/primaryTextColor" />
+
+            <CheckBox
+                android:id="@+id/cbFashion"
+                android:buttonTint="?attr/primaryTextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="onCheckboxClicked"
+                android:shadowColor="?attr/primaryTextColor"
                 android:text="@string/fashion"
-                android:onClick="onCheckboxClicked"/>
+                android:textColor="?attr/primaryTextColor" />
         </LinearLayout>
     </LinearLayout>
 
@@ -139,5 +165,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/apply_filter"
+        android:elevation="5dp"
+        android:textColor="?attr/primaryTextColor"
+        android:background="@android:color/darker_gray"
         android:onClick="onApplyFilterClicked"/>
+
 </LinearLayout>

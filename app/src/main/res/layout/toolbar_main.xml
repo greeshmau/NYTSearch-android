@@ -5,10 +5,20 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimary"
+    android:background="?attr/backgroundCardColor"
     android:fitsSystemWindows="true"
     android:minHeight="?attr/actionBarSize"
     app:contentInsetLeft="0dp"
+    app:collapseIcon="?attr/backIconPlaceHolder"
     app:contentInsetStart="0dp"
-    app:titleTextColor="@android:color/white">
+    app:titleTextColor="?attr/primaryTextColor">
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/app_name"
+        android:textColor="?attr/primaryTextColor"
+        android:textSize="25sp"
+        tools:context="" />
 </android.support.v7.widget.Toolbar>

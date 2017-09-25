@@ -3,12 +3,16 @@ package com.codepath.gumapathi.nytsearch.Activities;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -19,12 +23,15 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,16 +78,10 @@ public class ListActivity extends AppCompatActivity {
     private Switch swOldNew;
     private DrawerLayout mDrawer;
     private NavigationView nvDrawer;
-
-
+    private TextView toolbar_title;
     private APIQueryStringBuilder apiStringQuery;
 
     private EndlessRecyclerViewScrollListener scrollListener;
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
 
     public static String ordinal(int i) {
         String[] sufixes = new String[]{"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
@@ -96,25 +97,59 @@ public class ListActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         apiStringQuery = new APIQueryStringBuilder("", false, "", "");
         super.onCreate(savedInstanceState);
+        Calendar cal = Calendar.getInstance();
+        Log.i("SAMY_time",String.valueOf(cal.getTime().getHours()));
+        if(cal.getTime().getHours() > 12) {
+            this.setTheme(R.style.AppTheme_Primary_Base_Dark);
+        }
+        else {
+            this.setTheme(R.style.AppTheme_Primary_Base_Light);
+        }
         setContentView(R.layout.activity_list);
         //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
-        Drawable myIcon = getResources().getDrawable( R.drawable.ic_dehaze_black_24dp );
-        getSupportActionBar().setHomeAsUpIndicator(myIcon);
+
+        int[] attrs = new int[]{R.attr.hambIconPlaceHolder};
+        TypedArray ta = this.obtainStyledAttributes(attrs);
+        Drawable drawableFromTheme = ta.getDrawable(0 );
+        ta.recycle();
+
+        getSupportActionBar().setHomeAsUpIndicator(drawableFromTheme);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setElevation(0);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
-        getSupportActionBar().setTitle("Home");
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar_title = (TextView) findViewById(R.id.toolbar_title);
+        Typeface titleFont = Typeface.createFromAsset(this.getAssets(), "fonts/englishtowne.ttf");
+        toolbar_title.setTypeface(titleFont);
+        toolbar_title.setText("NYT Search");
+        //getSupportActionBar().setTitle("Home");
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
+
+        /*Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            apiStringQuery.setQueryTerm(query);
+            searchArticles(apiStringQuery.getQueryString(), 0);
+            Toast.makeText(ListActivity.this, "Voice search " + query, Toast.LENGTH_SHORT).show();
+        } else {
+            //clear only on new activity launches
+            //filterPreferences.edit().clear().commit();
+        }*/
 
         RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
         allArticles = new ArrayList<>();
@@ -132,19 +167,19 @@ public class ListActivity extends AppCompatActivity {
             }
         };
         rvArticles.addOnScrollListener(scrollListener);
-        if(!isOnline() || !isNetworkAvailable()) {
+        if (!isOnline() || !isNetworkAvailable()) {
             Toast.makeText(ListActivity.this, "Please make sure your phone is online and can access internet.", Toast.LENGTH_LONG).show();
         }
 
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
-        Log.i("Samy-nav",navigationView.toString());
+        Log.i("Samy-nav", navigationView.toString());
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        Log.i("Samy-nav",menuItem.getTitle().toString());
+                        Log.i("Samy-nav", menuItem.getTitle().toString());
                         selectDrawerItem(menuItem);
                         return true;
                     }
@@ -152,11 +187,9 @@ public class ListActivity extends AppCompatActivity {
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
-        // Create a new fragment and specify the fragment to show based on nav item clicked
-        Fragment fragment = null;
-        Class fragmentClass;
-        switch(menuItem.getItemId()) {
+        switch (menuItem.getItemId()) {
             case R.id.nav_first_fragment:
+
                 Toast.makeText(ListActivity.this, "First", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_second_fragment:
@@ -165,6 +198,13 @@ public class ListActivity extends AppCompatActivity {
                 Toast.makeText(ListActivity.this, "2", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_third_fragment:
+                this.setTheme(R.style.AppTheme_Primary_Base_Dark);
+                //recreate();
+                Toast.makeText(ListActivity.this, "3", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_fourth_fragment:
+                this.setTheme(R.style.AppTheme_Primary_Base_Light);
+                //recreate();
                 Toast.makeText(ListActivity.this, "3", Toast.LENGTH_SHORT).show();
                 break;
             default:
@@ -186,19 +226,58 @@ public class ListActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
+
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = this.getTheme();
+        theme.resolveAttribute(R.attr.primaryTextColor, typedValue, true);
+        @ColorInt int color = typedValue.data;
+        int searchEditId = android.support.v7.appcompat.R.id.search_src_text;
+        EditText et = (EditText) searchView.findViewById(searchEditId);
+        et.setTextColor(color);
+        et.setHintTextColor(color);
+
+        ImageView mSearchButton = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        int[] attrs = new int[]{R.attr.searchIconPlaceHolder /* index 0 */};
+        TypedArray ta = this.obtainStyledAttributes(attrs);
+        Drawable drawableFromTheme = ta.getDrawable(0 );
+        ta.recycle();
+        mSearchButton.setImageDrawable(drawableFromTheme);
+
+        ImageView mSubmitButton = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_go_btn);
+        attrs = new int[]{R.attr.searchIconPlaceHolder /* index 0 */};
+        ta = this.obtainStyledAttributes(attrs);
+        drawableFromTheme = ta.getDrawable(0 );
+        ta.recycle();
+        mSubmitButton.setImageDrawable(drawableFromTheme);
+
+        ImageView mCloseButton = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        attrs = new int[]{R.attr.closeIconPlaceHolder /* index 0 */};
+        ta = this.obtainStyledAttributes(attrs);
+        drawableFromTheme = ta.getDrawable(0 );
+        ta.recycle();
+        mCloseButton.setImageDrawable(drawableFromTheme);
+
+        View searchPlate = searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
+        searchPlate.setBackgroundColor(Color.TRANSPARENT);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             //Log ("SAMY", "Searching articles");
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // perform query here
                 //pd.show();
-                apiStringQuery.setQueryTerm(query);
+                allArticles.clear();
+                articlesAdapter.notifyDataSetChanged();
+                //rvArticles.no
+                apiStringQuery.setQueryTerm(query.trim());
                 searchArticles(apiStringQuery.getQueryString(), 0);
                 Toast.makeText(ListActivity.this, "Searching! " + query, Toast.LENGTH_SHORT).show();
                 searchView.clearFocus();
                 return true;
             }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
@@ -220,7 +299,7 @@ public class ListActivity extends AppCompatActivity {
             Toast.makeText(this, "Search clicked", Toast.LENGTH_LONG).show();
             return true;
         }
-        if(id == android.R.id.home) {
+        if (id == android.R.id.home) {
             Toast.makeText(this, "home clicked", Toast.LENGTH_LONG).show();
             mDrawer.openDrawer(GravityCompat.START);
             return true;
@@ -263,54 +342,53 @@ public class ListActivity extends AppCompatActivity {
         Log.i("SAMY-f fash", String.valueOf(fashion));
         Log.i("SAMY-f sport", String.valueOf(sports));
 
-        if(!beginDate.isEmpty() && !endDate.isEmpty())
-        try {
-            Date bgnDate;
-            Date edDate;
-            DateFormat format = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
+        if (!beginDate.isEmpty() && !endDate.isEmpty())
+            try {
+                Date bgnDate;
+                Date edDate;
+                DateFormat format = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
 
-            bgnDate = format.parse(beginDate.replaceAll("(?<=\\d)(st|nd|rd|th)", ""));
-            edDate = format.parse(endDate.replaceAll("(?<=\\d)(st|nd|rd|th)", ""));
+                bgnDate = format.parse(beginDate.replaceAll("(?<=\\d)(st|nd|rd|th)", ""));
+                edDate = format.parse(endDate.replaceAll("(?<=\\d)(st|nd|rd|th)", ""));
 
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(bgnDate);
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH);
-            int day = cal.get(Calendar.DAY_OF_MONTH);
-            String tempMonth = month > 9 ? String.valueOf(month + 1) : "0" + String.valueOf(month + 1);
-            String tempDay = day > 9 ? String.valueOf(day) : "0" + String.valueOf(day);
-            beginDate = String.valueOf(year) + tempMonth + tempDay;
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(bgnDate);
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+                String tempMonth = month > 9 ? String.valueOf(month + 1) : "0" + String.valueOf(month + 1);
+                String tempDay = day > 9 ? String.valueOf(day) : "0" + String.valueOf(day);
+                beginDate = String.valueOf(year) + tempMonth + tempDay;
 
-            cal.setTime(edDate);
-            year = cal.get(Calendar.YEAR);
-            month = cal.get(Calendar.MONTH);
-            day = cal.get(Calendar.DAY_OF_MONTH);
-            tempMonth = month > 9 ? String.valueOf(month + 1) : "0" + String.valueOf(month + 1);
-            tempDay = day > 9 ? String.valueOf(day) : "0" + String.valueOf(day);
-            endDate = String.valueOf(year) +
-                    tempMonth +
-                    tempDay;
+                cal.setTime(edDate);
+                year = cal.get(Calendar.YEAR);
+                month = cal.get(Calendar.MONTH);
+                day = cal.get(Calendar.DAY_OF_MONTH);
+                tempMonth = month > 9 ? String.valueOf(month + 1) : "0" + String.valueOf(month + 1);
+                tempDay = day > 9 ? String.valueOf(day) : "0" + String.valueOf(day);
+                endDate = String.valueOf(year) +
+                        tempMonth +
+                        tempDay;
 
-            Log.i("SAMY-parBDT", beginDate);
-            Log.i("SAMY-pa-EDT", endDate);
-            apiStringQuery.setBeginDate(beginDate);
-            apiStringQuery.setEndDate(endDate);
-        } catch (ParseException ex) {
-            Log.i("SAMY-dateexception", ex.toString());
-        }
+                Log.i("SAMY-parBDT", beginDate);
+                Log.i("SAMY-pa-EDT", endDate);
+                apiStringQuery.setBeginDate(beginDate);
+                apiStringQuery.setEndDate(endDate);
+            } catch (ParseException ex) {
+                Log.i("SAMY-dateexception", ex.toString());
+            }
 
-        if(oldNew){
+        if (oldNew) {
             apiStringQuery.setOldestFirst(false);
-        }
-        else {
+        } else {
             apiStringQuery.setOldestFirst(true);
         }
 
-        if(arts)
+        if (arts)
             apiStringQuery.addNewsDesks(NewsDesk.ARTS);
-        if(sports)
+        if (sports)
             apiStringQuery.addNewsDesks(NewsDesk.SPORTS);
-        if(fashion)
+        if (fashion)
             apiStringQuery.addNewsDesks(NewsDesk.FASHION);
 
         apiStringQuery.getQueryString();
@@ -358,10 +436,9 @@ public class ListActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
         String url = "";
-        if(pageNum == 0) {
+        if (pageNum == 0) {
             url = "https://api.nytimes.com/svc/search/v2/articlesearch.json" + query;
-        }
-        else {
+        } else {
             url = "https://api.nytimes.com/svc/search/v2/articlesearch.json" + query + "&page=" + pageNum;
         }
         Request request = new Request.Builder()

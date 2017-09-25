@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ListActivity">
+        <attr name="primaryTextColor" format="color" />
+        <attr name="secondaryTextColor" format="color" />
+        <attr name="dividerColor" format="color" />
+        <attr name="backgroundCardColor" format="color" />
+        <attr name="greyColor" format="color" />
+        <attr name="searchIconPlaceHolder" format="integer" />
+        <attr name="filterIconPlaceHolder" format="integer" />
+        <attr name="homeIconPlaceHolder" format="integer" />
+        <attr name="favIconPlaceHolder" format="integer" />
+        <attr name="sunIconPlaceHolder" format="integer" />
+        <attr name="moonIconPlaceHolder" format="integer" />
+        <attr name="unfavIconPlaceHolder" format="integer" />
+        <attr name="hambIconPlaceHolder" format="integer" />
+        <attr name="calIconPlaceHolder" format="integer" />
+        <attr name="backIconPlaceHolder" format="integer" />
+        <attr name="closeIconPlaceHolder" format="integer"/>
+    </declare-styleable>
+</resources>
