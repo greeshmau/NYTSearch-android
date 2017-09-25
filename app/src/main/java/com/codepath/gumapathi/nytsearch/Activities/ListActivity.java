@@ -240,13 +240,7 @@ public class ListActivity extends AppCompatActivity {
         MenuItem searchItem = menu.findItem(R.id.action_search);
 
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-
-//        / Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        // Assumes current activity is the searchable activity
-        ComponentName cn = new ComponentName(this, ListActivity.class);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        searchView.setIconifiedByDefault(false);
 
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = this.getTheme();
@@ -265,28 +259,36 @@ public class ListActivity extends AppCompatActivity {
         mSearchButton.setImageDrawable(drawableFromTheme);
 
         ImageView mSubmitButton = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_go_btn);
-        attrs = new int[]{R.attr.searchIconPlaceHolder /* index 0 */};
-        ta = this.obtainStyledAttributes(attrs);
-        drawableFromTheme = ta.getDrawable(0 );
+        int[] attrs1 = new int[]{R.attr.searchIconPlaceHolder /* index 0 */};
+        TypedArray ta1 = this.obtainStyledAttributes(attrs1);
+        Drawable drawableFromTheme1 = ta1.getDrawable(0 );
         ta.recycle();
-        mSubmitButton.setImageDrawable(drawableFromTheme);
+        mSubmitButton.setImageDrawable(drawableFromTheme1);
 
         ImageView mCloseButton = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
-        attrs = new int[]{R.attr.closeIconPlaceHolder /* index 0 */};
-        ta = this.obtainStyledAttributes(attrs);
-        drawableFromTheme = ta.getDrawable(0 );
+        int[] attrs2 = new int[]{R.attr.closeIconPlaceHolder /* index 0 */};
+        TypedArray ta2 = this.obtainStyledAttributes(attrs2);
+        Drawable drawableFromTheme2 = ta2.getDrawable(0 );
         ta.recycle();
-        mCloseButton.setImageDrawable(drawableFromTheme);
+        mCloseButton.setImageDrawable(drawableFromTheme2);
 
         ImageView mVoiceButton = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_voice_btn);
-        attrs = new int[]{R.attr.voiceIconPlaceHolder};
-        ta = this.obtainStyledAttributes(attrs);
-        drawableFromTheme = ta.getDrawable(0 );
+        int[] attrs3 = new int[]{R.attr.voiceIconPlaceHolder};
+        TypedArray ta3 = this.obtainStyledAttributes(attrs3);
+        Drawable drawableFromTheme3 = ta3.getDrawable(0 );
         ta.recycle();
-        mCloseButton.setImageDrawable(drawableFromTheme);
+        mVoiceButton.setImageDrawable(drawableFromTheme3);
 
         View searchPlate = searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
         searchPlate.setBackgroundColor(Color.TRANSPARENT);
+
+
+//        / Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        // Assumes current activity is the searchable activity
+        ComponentName cn = new ComponentName(this, ListActivity.class);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             //Log ("SAMY", "Searching articles");
