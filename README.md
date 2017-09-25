@@ -41,6 +41,7 @@ The following **bonus** features are implemented:
 The following **additional** features are implemented:
 
 * [X] List anything else that you can get done to improve the app functionality!
+    * [X] Added voice search functionality
     * [X] Added functionality to select favorite items to read later, persistant using SQLite
     * [X] Added functionality to change from day mode to night mode, and vice versa; dynamically
     * [X] Added custom fonts
