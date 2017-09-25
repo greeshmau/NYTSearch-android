@@ -56,7 +56,7 @@ Here's a walkthrough of implemented user stories:
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
-Video for demonstration of Voice search, infinite scroll - ./voiceSearchDemo.mp4 
+Video for demonstration of Voice search, infinite scroll - (https://github.com/greeshmau/NYTSearch-android/blob/master/voiceSearchDemo.mp4)  
 
 ## Notes
 
