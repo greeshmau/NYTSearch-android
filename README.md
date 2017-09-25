@@ -2,7 +2,7 @@
 
 **Name of your app** is an android app that allows a user to search for articles on web using simple filters. The app utilizes [New York Times Search API](http://developer.nytimes.com/docs/read/article_search_api_v2).
 
-Time spent: **X** hours spent in total
+Time spent: **25** hours spent in total
 
 ## User Stories
 
@@ -55,6 +55,8 @@ Here's a walkthrough of implemented user stories:
 <img src='./nyt2.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
+
+Video for demonstration of Voice search, infinite scroll - ./voiceSearchDemo.mp4 
 
 ## Notes
 
